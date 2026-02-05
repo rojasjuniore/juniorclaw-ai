@@ -126,11 +126,16 @@ export default function Home() {
             className="h-[60vh] overflow-y-auto p-4 text-sm cursor-text"
             onClick={() => inputRef.current?.focus()}
           >
-            {lines.map((line, i) => (
-              <div key={i} className={line.startsWith('>') || line.startsWith('▓') || line.startsWith('$') ? 'text-green-500' : line.startsWith('  ✓') || line.includes('DEPLOYED') || line.includes('═') ? 'text-green-400' : 'text-zinc-300'}>
-                {line}
-              </div>
-            ))}
+            {lines.map((line, i) => {
+              const text = line || '';
+              const isGreen = text.startsWith('>') || text.startsWith('▓') || text.startsWith('$');
+              const isLightGreen = text.startsWith('  ✓') || text.includes('DEPLOYED') || text.includes('═');
+              return (
+                <div key={i} className={isGreen ? 'text-green-500' : isLightGreen ? 'text-green-400' : 'text-zinc-300'}>
+                  {text}
+                </div>
+              );
+            })}
 
             {ready && (
               <form onSubmit={submit} className="flex items-center mt-1">
