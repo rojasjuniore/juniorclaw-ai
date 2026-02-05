@@ -1,56 +1,70 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Github, Twitter, MessageCircle, Globe } from 'lucide-react';
-
-const links = [
-  { icon: Globe, href: 'https://intechchain.com', label: 'IntechChain' },
-  { icon: MessageCircle, href: 'https://t.me/rojasjuniore', label: 'Telegram' },
-  { icon: Twitter, href: 'https://twitter.com/rojasjuniore', label: 'Twitter' },
-  { icon: Github, href: 'https://github.com/rojasjuniore', label: 'GitHub' },
-];
 
 export function Footer() {
   return (
-    <footer className="py-12 px-4 border-t border-border">
-      <div className="max-w-6xl mx-auto">
+    <footer className="py-8 px-4 border-t border-[#1a1a1a] relative">
+      <div className="crt absolute inset-0 pointer-events-none" />
+      
+      <div className="max-w-4xl mx-auto relative z-10">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="flex flex-col md:flex-row items-center justify-between gap-6"
+          className="flex flex-col md:flex-row items-center justify-between gap-4 text-xs"
         >
-          {/* Logo/Name */}
-          <div className="flex items-center gap-3">
-            <span className="text-3xl">🦞</span>
-            <div>
-              <h3 className="font-bold text-lg">Junior Claw</h3>
-              <p className="text-sm text-muted-foreground">Strategic AI Copilot</p>
-            </div>
-          </div>
-
-          {/* Links */}
+          {/* Left */}
           <div className="flex items-center gap-4">
-            {links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-lg text-muted-foreground hover:text-amber-500 hover:bg-amber-500/10 transition-colors"
-                aria-label={link.label}
-              >
-                <link.icon className="w-5 h-5" />
-              </a>
-            ))}
+            <span className="text-[#00ff41]">🦞</span>
+            <span className="text-[#666]">JUNIOR_CLAW v2.0</span>
+            <span className="text-[#333]">|</span>
+            <span className="text-[#666]">STRATEGIC AI COPILOT</span>
           </div>
 
-          {/* Copyright */}
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} IntechChain. Todos los derechos reservados.
-          </p>
+          {/* Center - Links */}
+          <div className="flex items-center gap-4">
+            <a 
+              href="https://intechchain.com" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#666] hover:text-[#00ff41] transition-colors"
+            >
+              [INTECHCHAIN]
+            </a>
+            <a 
+              href="https://t.me/rojasjuniore" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#666] hover:text-[#00ff41] transition-colors"
+            >
+              [TELEGRAM]
+            </a>
+            <a 
+              href="https://github.com/rojasjuniore" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="text-[#666] hover:text-[#00ff41] transition-colors"
+            >
+              [GITHUB]
+            </a>
+          </div>
+
+          {/* Right */}
+          <div className="text-[#333]">
+            © {new Date().getFullYear()} // ALL_RIGHTS_RESERVED
+          </div>
         </motion.div>
+
+        {/* Status bar */}
+        <div className="mt-4 pt-4 border-t border-[#1a1a1a] flex items-center justify-center gap-2 text-[10px] text-[#333]">
+          <span className="w-1.5 h-1.5 bg-[#00ff41] rounded-full" />
+          <span>SYSTEM OPERATIONAL</span>
+          <span>|</span>
+          <span>POWERED BY CLAUDE</span>
+          <span>|</span>
+          <span>DEPLOYED ON RAILWAY</span>
+        </div>
       </div>
     </footer>
   );

@@ -1,8 +1,11 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { JetBrains_Mono } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const mono = JetBrains_Mono({ 
+  subsets: ['latin'],
+  variable: '--font-mono',
+});
 
 export const metadata: Metadata = {
   title: 'Junior Claw | Strategic AI Copilot',
@@ -33,7 +36,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="dark">
-      <body className={`${inter.className} antialiased`}>
+      <body className={`${mono.variable} font-mono antialiased bg-black text-[#f0f0f0]`}>
         {children}
       </body>
     </html>

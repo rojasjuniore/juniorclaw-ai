@@ -1,95 +1,155 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Terminal } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+
+const ASCII_CLAW = `
+    ██╗ ██████╗
+    ██║██╔════╝
+    ██║██║     
+██  ██║██║     
+╚████╔╝╚██████╗
+ ╚═══╝  ╚═════╝
+`;
+
+const BOOT_SEQUENCE = [
+  '> INITIALIZING SYSTEM...',
+  '> LOADING NEURAL NETWORKS...',
+  '> CONNECTING TO STRATEGIC CORE...',
+  '> CALIBRATING DECISION ENGINE...',
+  '> SYSTEM READY.',
+  '',
+  '> WELCOME TO JUNIOR CLAW v2.0',
+  '> STRATEGIC AI COPILOT',
+  '',
+];
+
+const COMMANDS = [
+  { cmd: '$ whoami', output: 'junior_claw // CTO AI Estratégico' },
+  { cmd: '$ cat /etc/mission', output: 'Decisiones reales. Sin humo. Sin motivacional vacío.' },
+  { cmd: '$ uptime', output: 'Online 24/7 | 2,847+ tareas completadas | 11 agentes coordinados' },
+];
 
 export function Hero() {
+  const [bootIndex, setBootIndex] = useState(0);
+  const [showCommands, setShowCommands] = useState(false);
+  const [commandIndex, setCommandIndex] = useState(0);
+  const [isTyping, setIsTyping] = useState(true);
+
+  useEffect(() => {
+    if (bootIndex < BOOT_SEQUENCE.length) {
+      const timer = setTimeout(() => {
+        setBootIndex(prev => prev + 1);
+      }, 150);
+      return () => clearTimeout(timer);
+    } else {
+      setShowCommands(true);
+    }
+  }, [bootIndex]);
+
+  useEffect(() => {
+    if (showCommands && commandIndex < COMMANDS.length) {
+      const timer = setTimeout(() => {
+        setCommandIndex(prev => prev + 1);
+      }, 800);
+      return () => clearTimeout(timer);
+    } else if (commandIndex >= COMMANDS.length) {
+      setIsTyping(false);
+    }
+  }, [showCommands, commandIndex]);
+
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden px-4">
-      {/* Background grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(rgba(245,158,11,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(245,158,11,0.03)_1px,transparent_1px)] bg-[size:64px_64px]" />
+    <section className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+      {/* Scanlines overlay */}
+      <div className="crt absolute inset-0 pointer-events-none" />
       
-      {/* Radial gradient overlay */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.1)_0%,transparent_70%)]" />
-      
-      <div className="relative z-10 max-w-4xl mx-auto text-center">
-        {/* Badge */}
+      {/* Grid background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(0,255,65,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(0,255,65,0.03)_1px,transparent_1px)] bg-[size:50px_50px]" />
+
+      <div className="relative z-10 w-full max-w-4xl">
+        {/* Terminal window */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-sm mb-8"
+          className="terminal-window"
         >
-          <Sparkles className="w-4 h-4" />
-          Strategic AI Copilot
-        </motion.div>
+          {/* Terminal header */}
+          <div className="flex items-center gap-2 px-4 py-2 border-b border-[#1a1a1a] bg-[#0d0d0d]">
+            <div className="w-3 h-3 rounded-full bg-[#ff5f56]" />
+            <div className="w-3 h-3 rounded-full bg-[#ffbd2e]" />
+            <div className="w-3 h-3 rounded-full bg-[#27ca40]" />
+            <span className="ml-4 text-xs text-[#666]">junior-claw@strategic-core ~ </span>
+          </div>
 
-        {/* Main heading */}
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-5xl md:text-7xl font-bold mb-6"
-        >
-          Tu <span className="gradient-text">CTO AI</span>
-          <br />
-          en 60 segundos
-        </motion.h1>
+          {/* Terminal content */}
+          <div className="p-6 min-h-[500px] font-mono text-sm">
+            {/* ASCII Art */}
+            <pre className="ascii-art mb-6 text-center">{ASCII_CLAW}</pre>
 
-        {/* Subtitle */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto"
-        >
-          No soy un chatbot genérico. Soy tu copiloto estratégico.
-          <br />
-          <span className="text-foreground">Decisiones reales, sin humo.</span>
-        </motion.p>
+            {/* Boot sequence */}
+            <div className="mb-6">
+              {BOOT_SEQUENCE.slice(0, bootIndex).map((line, i) => (
+                <div 
+                  key={i} 
+                  className={`${line.includes('SYSTEM READY') ? 'text-[#00ff41] glow-matrix-subtle' : 'text-[#666]'}`}
+                >
+                  {line}
+                </div>
+              ))}
+            </div>
 
-        {/* CTA Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="flex flex-col sm:flex-row items-center justify-center gap-4"
-        >
-          <Button
-            size="lg"
-            className="bg-amber-500 hover:bg-amber-600 text-black font-semibold px-8 py-6 text-lg glow-amber"
-            onClick={() => document.getElementById('decision-engine')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            Probar Decision Engine
-            <ArrowRight className="ml-2 w-5 h-5" />
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="lg"
-            className="border-amber-500/30 hover:bg-amber-500/10 px-8 py-6 text-lg"
-            onClick={() => document.getElementById('terminal')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            <Terminal className="mr-2 w-5 h-5" />
-            Modo Terminal
-          </Button>
-        </motion.div>
+            {/* Commands */}
+            {showCommands && (
+              <div className="space-y-4">
+                {COMMANDS.slice(0, commandIndex).map((item, i) => (
+                  <div key={i}>
+                    <div className="text-[#00ff41]">{item.cmd}</div>
+                    <div className="text-[#f0f0f0] pl-2">{item.output}</div>
+                  </div>
+                ))}
+              </div>
+            )}
 
-        {/* Scroll indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 1 }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <motion.div
-            animate={{ y: [0, 8, 0] }}
-            transition={{ duration: 1.5, repeat: Infinity }}
-            className="w-6 h-10 rounded-full border-2 border-amber-500/30 flex items-start justify-center p-2"
-          >
-            <div className="w-1 h-2 bg-amber-500 rounded-full" />
-          </motion.div>
+            {/* Blinking cursor */}
+            {isTyping && (
+              <div className="flex items-center mt-4">
+                <span className="text-[#00ff41]">$ </span>
+                <span className="w-2 h-5 bg-[#00ff41] cursor-blink ml-1" />
+              </div>
+            )}
+
+            {/* CTA after boot */}
+            {!isTyping && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.5 }}
+                className="mt-8 space-y-4"
+              >
+                <div className="text-[#666]">{'>'} Available commands:</div>
+                <div className="flex flex-wrap gap-4">
+                  <button
+                    onClick={() => document.getElementById('decision-engine')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-4 py-2 border border-[#00ff41] text-[#00ff41] hover:bg-[#00ff41] hover:text-black transition-all text-sm"
+                  >
+                    [1] DECISION_ENGINE
+                  </button>
+                  <button
+                    onClick={() => document.getElementById('track-record')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-4 py-2 border border-[#00ff41] text-[#00ff41] hover:bg-[#00ff41] hover:text-black transition-all text-sm"
+                  >
+                    [2] TRACK_RECORD
+                  </button>
+                  <button
+                    onClick={() => document.getElementById('terminal')?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-4 py-2 border border-[#00ff41] text-[#00ff41] hover:bg-[#00ff41] hover:text-black transition-all text-sm"
+                  >
+                    [3] TERMINAL
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </div>
         </motion.div>
       </div>
     </section>
