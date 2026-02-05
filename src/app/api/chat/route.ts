@@ -37,9 +37,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const anthropicKey = process.env.ANTHROPIC_API_KEY;
+    const openaiKey = process.env.OPENAI_API_KEY;
     
-    if (!anthropicKey) {
+    if (!openaiKey) {
       // Fallback response if no API key
       return NextResponse.json({
         content: `Análisis rápido:
@@ -54,27 +54,28 @@ Si quieres un análisis más profundo, necesito saber: ¿cuál es tu constraint 
       });
     }
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': anthropicKey,
-        'anthropic-version': '2023-06-01',
+        'Authorization': `Bearer ${openaiKey}`,
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'gpt-4o',
         max_tokens: 1024,
-        system: SYSTEM_PROMPT,
-        messages: messages.map(m => ({
-          role: m.role,
-          content: m.content,
-        })),
+        messages: [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...messages.map(m => ({
+            role: m.role,
+            content: m.content,
+          })),
+        ],
       }),
     });
 
     if (!response.ok) {
       const error = await response.text();
-      console.error('Anthropic API error:', error);
+      console.error('OpenAI API error:', error);
       return NextResponse.json(
         { error: 'API error' },
         { status: 500 }
@@ -82,7 +83,7 @@ Si quieres un análisis más profundo, necesito saber: ¿cuál es tu constraint 
     }
 
     const data = await response.json();
-    const content = data.content?.[0]?.text || 'No response generated';
+    const content = data.choices?.[0]?.message?.content || 'No response generated';
 
     return NextResponse.json({ content });
   } catch (error) {
