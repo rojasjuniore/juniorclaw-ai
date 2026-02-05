@@ -39,9 +39,13 @@ export function TerminalHero() {
 
   useEffect(() => {
     let i = 0;
+    const bootLines = [...BOOT_LINES];
     const interval = setInterval(() => {
-      if (i < BOOT_LINES.length) {
-        setLines(prev => [...prev, BOOT_LINES[i]]);
+      if (i < bootLines.length) {
+        const line = bootLines[i];
+        if (line) {
+          setLines(prev => [...prev, line]);
+        }
         i++;
       } else {
         clearInterval(interval);
@@ -54,8 +58,12 @@ export function TerminalHero() {
   }, []);
 
   const addLine = useCallback((line: TerminalLine) => {
-    setLines(prev => [...prev, line]);
+    if (line && line.type && typeof line.content === 'string') {
+      setLines(prev => [...prev, line]);
+    }
   }, []);
+
+  const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
   const simulateBuild = useCallback(async (project: string) => {
     setIsBuilding(true);
@@ -81,9 +89,12 @@ export function TerminalHero() {
       const data = await res.json();
       
       addLine({ type: 'system', content: '' });
-      data.content.split('\n').filter((l: string) => l.trim()).forEach((line: string) => {
-        addLine({ type: 'output', content: `  ${line}` });
-      });
+      if (data.content) {
+        const responseLines = data.content.split('\n').filter((l: string) => l && l.trim());
+        for (const line of responseLines) {
+          addLine({ type: 'output', content: `  ${line}` });
+        }
+      }
     } catch {
       addLine({ type: 'error', content: '> Error de conexión' });
     }
@@ -93,12 +104,13 @@ export function TerminalHero() {
       setPhase(p + 1);
       addLine({ type: 'system', content: '' });
       addLine({ type: 'success', content: `▓ ${BUILD_PHASES[p]}` });
-      await new Promise(r => setTimeout(r, 600 + Math.random() * 400));
+      await sleep(600 + Math.random() * 400);
       addLine({ type: 'success', content: '  ✓ Completado' });
     }
 
     // Final
-    const url = `https://${project.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 15)}.up.railway.app`;
+    const slug = project.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 15);
+    const url = `https://${slug}.up.railway.app`;
     addLine({ type: 'system', content: '' });
     addLine({ type: 'success', content: '════════════════════════════════════' });
     addLine({ type: 'success', content: '  🚀 DEPLOYED!' });
@@ -161,25 +173,28 @@ export function TerminalHero() {
 
             {/* Body */}
             <div ref={containerRef} className="h-[50vh] max-h-[400px] overflow-y-auto p-4 font-mono text-sm">
-              {lines.map((line, i) => (
-                <div
-                  key={i}
-                  className={`whitespace-pre-wrap ${
-                    line.type === 'input' ? 'text-[#00ff41]' :
-                    line.type === 'success' ? 'text-[#00ff41]' :
-                    line.type === 'error' ? 'text-[#ff5f56]' :
-                    line.type === 'progress' ? 'text-[#ffbd2e]' :
-                    line.type === 'output' ? 'text-[#e0e0e0]' :
-                    'text-[#555]'
-                  }`}
-                >
-                  {line.content}
-                </div>
-              ))}
+              {lines.map((line, i) => {
+                if (!line || !line.type) return null;
+                return (
+                  <div
+                    key={i}
+                    className={`whitespace-pre-wrap ${
+                      line.type === 'input' ? 'text-[#00ff41]' :
+                      line.type === 'success' ? 'text-[#00ff41]' :
+                      line.type === 'error' ? 'text-[#ff5f56]' :
+                      line.type === 'progress' ? 'text-[#ffbd2e]' :
+                      line.type === 'output' ? 'text-[#e0e0e0]' :
+                      'text-[#555]'
+                    }`}
+                  >
+                    {line.content || ''}
+                  </div>
+                );
+              })}
 
               {ready && (
                 <form onSubmit={handleSubmit} className="flex items-center mt-1">
-                  <span className="text-[#00ff41]">$ construir "</span>
+                  <span className="text-[#00ff41]">$ construir &quot;</span>
                   <input
                     ref={inputRef}
                     type="text"
@@ -188,13 +203,13 @@ export function TerminalHero() {
                     className="flex-1 bg-transparent outline-none text-white font-mono"
                     placeholder="tu proyecto..."
                   />
-                  <span className="text-[#00ff41]">"</span>
+                  <span className="text-[#00ff41]">&quot;</span>
                   <span className="w-2 h-5 bg-[#00ff41] ml-1 animate-[blink_1s_step-end_infinite]" />
                 </form>
               )}
 
               {isBuilding && (
-                <div className="text-[#ffbd2e] animate-pulse mt-1">{'>'} Construyendo...</div>
+                <div className="text-[#ffbd2e] animate-pulse mt-1">&gt; Construyendo...</div>
               )}
             </div>
           </div>
