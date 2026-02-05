@@ -1,33 +1,37 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 
 interface Client {
   name: string;
   url: string;
-  logo: string;
   category: 'fintech' | 'infra' | 'public';
 }
 
 const clients: Client[] = [
   // Fintech / Web3
-  { name: 'Chainlink', url: 'https://chain.link', logo: 'https://cryptologos.cc/logos/chainlink-link-logo.png', category: 'fintech' },
-  { name: 'Gnosis Pay', url: 'https://gnosispay.com', logo: 'https://docs.gnosischain.com/img/tokens/gno.png', category: 'fintech' },
-  { name: 'Sumsub', url: 'https://sumsub.com', logo: 'https://sumsub.com/favicon.ico', category: 'fintech' },
-  { name: 'Changelly', url: 'https://changelly.com', logo: 'https://changelly.com/icons/favicon-96x96.png', category: 'fintech' },
-  { name: 'Elliptic', url: 'https://elliptic.co', logo: 'https://www.elliptic.co/hubfs/Elliptic%20September%202022/Images/elliptic-logo.svg', category: 'fintech' },
-  { name: 'Web3Auth', url: 'https://web3auth.io', logo: 'https://web3auth.io/images/web3authlog.png', category: 'fintech' },
+  { name: 'Chainlink', url: 'https://chain.link', category: 'fintech' },
+  { name: 'Gnosis Pay', url: 'https://gnosispay.com', category: 'fintech' },
+  { name: 'Sumsub', url: 'https://sumsub.com', category: 'fintech' },
+  { name: 'Changelly', url: 'https://changelly.com', category: 'fintech' },
+  { name: 'Elliptic', url: 'https://elliptic.co', category: 'fintech' },
+  { name: 'Web3Auth', url: 'https://web3auth.io', category: 'fintech' },
+  { name: 'Minteo', url: 'https://minteo.com', category: 'fintech' },
+  { name: 'Punto Red', url: 'https://puntored.co', category: 'fintech' },
   
   // Infra
-  { name: 'Google Cloud', url: 'https://cloud.google.com', logo: 'https://www.gstatic.com/devrel-devsite/prod/v0e0f589edd85502a40d78d7d0825db8ea5ef3b99ab4070381ee86977c9168730/cloud/images/cloud-logo.svg', category: 'infra' },
-  { name: 'Firebase', url: 'https://firebase.google.com', logo: 'https://www.gstatic.com/devrel-devsite/prod/v0e0f589edd85502a40d78d7d0825db8ea5ef3b99ab4070381ee86977c9168730/firebase/images/touchicon-180.png', category: 'infra' },
-  { name: 'Railway', url: 'https://railway.app', logo: 'https://railway.app/brand/logo-light.png', category: 'infra' },
-  { name: 'Twilio', url: 'https://twilio.com', logo: 'https://www.twilio.com/assets/icons/twilio-icon-512.png', category: 'infra' },
+  { name: 'Google Cloud', url: 'https://cloud.google.com', category: 'infra' },
+  { name: 'Firebase', url: 'https://firebase.google.com', category: 'infra' },
+  { name: 'Railway', url: 'https://railway.app', category: 'infra' },
+  { name: 'Twilio', url: 'https://twilio.com', category: 'infra' },
+  { name: 'Voltage', url: 'https://voltage.cloud', category: 'infra' },
   
   // Public
-  { name: 'Alcaldía de Medellín', url: 'https://medellin.gov.co', logo: 'https://www.medellin.gov.co/assets/images/logo-alcaldia-medellin.svg', category: 'public' },
-  { name: 'Alcaldía de Envigado', url: 'https://envigado.gov.co', logo: 'https://www.envigado.gov.co/images/logo-envigado.png', category: 'public' },
+  { name: 'Alcaldía Medellín', url: 'https://medellin.gov.co', category: 'public' },
+  { name: 'Alcaldía Envigado', url: 'https://envigado.gov.co', category: 'public' },
+  { name: 'Alcaldía Itagüí', url: 'https://itagui.gov.co', category: 'public' },
+  { name: 'Alcaldía Bello', url: 'https://bello.gov.co', category: 'public' },
+  { name: 'Alcaldía Rionegro', url: 'https://rionegro.gov.co', category: 'public' },
 ];
 
 const categoryLabels = {
@@ -35,6 +39,15 @@ const categoryLabels = {
   infra: 'INFRAESTRUCTURA',
   public: 'SECTOR PÚBLICO',
 };
+
+function getFavicon(url: string) {
+  try {
+    const domain = new URL(url).hostname;
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+  } catch {
+    return null;
+  }
+}
 
 export function ClientLogos() {
   const grouped = {
@@ -81,29 +94,27 @@ export function ClientLogos() {
               <span className="flex-1 h-px bg-[#1a1a1a] ml-4" />
             </motion.div>
 
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
               {categoryClients.map((client, i) => (
                 <motion.a
                   key={client.name}
                   href={client.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: i * 0.05 }}
+                  initial={{ opacity: 0, y: 10 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.03 }}
                   viewport={{ once: true }}
-                  className="group flex flex-col items-center justify-center p-4 border border-[#1a1a1a] hover:border-[#00ff41]/50 bg-[#0a0a0a] hover:bg-[#0a0a0a]/80 transition-all aspect-square"
+                  className="group flex items-center gap-3 p-3 border border-[#1a1a1a] hover:border-[#00ff41]/50 bg-[#0a0a0a] hover:bg-[#0f0f0f] transition-all"
                 >
-                  <div className="relative w-10 h-10 mb-2 opacity-60 group-hover:opacity-100 transition-opacity grayscale group-hover:grayscale-0">
-                    <Image
-                      src={client.logo}
-                      alt={client.name}
-                      fill
-                      className="object-contain"
-                      unoptimized
-                    />
-                  </div>
-                  <span className="text-[9px] text-[#555] group-hover:text-[#888] font-mono text-center leading-tight">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={getFavicon(client.url) || ''}
+                    alt=""
+                    className="w-5 h-5 opacity-50 group-hover:opacity-100 transition-opacity"
+                    loading="lazy"
+                  />
+                  <span className="text-[11px] text-[#666] group-hover:text-[#aaa] font-mono truncate">
                     {client.name}
                   </span>
                 </motion.a>
